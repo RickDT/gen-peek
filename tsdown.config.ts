@@ -4,7 +4,7 @@ export default defineConfig({
   entry: ["src/index.ts"],
   format: ["esm"],
   dts: { oxc: true, resolver: "oxc" },
-  exports: true,
+  exports: false,
   clean: true,
   sourcemap: true,
 });
