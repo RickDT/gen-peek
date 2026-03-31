@@ -4,7 +4,15 @@ export function parseExifUserComment(
   view: DataView,
   tiffStart: number,
 ): string | null {
+  if (tiffStart < 0 || tiffStart + 8 > bytes.length) {
+    return null;
+  }
+
   const byteOrder = String.fromCharCode(bytes[tiffStart], bytes[tiffStart + 1]);
+  if (byteOrder !== "II" && byteOrder !== "MM") {
+    return null;
+  }
+
   const littleEndian = byteOrder === "II";
   const read16 = (offset: number) => view.getUint16(tiffStart + offset, littleEndian);
   const read32 = (offset: number) => view.getUint32(tiffStart + offset, littleEndian);

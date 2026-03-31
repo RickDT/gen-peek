@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { deflateSync } from "node:zlib";
 
 import { parseImageMeta } from "./index.ts";
 import type {
@@ -74,6 +75,23 @@ function buildITxtChunk(key: string, value: string): Uint8Array {
   return buildPNGChunk("iTXt", data);
 }
 
+function buildCompressedITxtChunk(key: string, value: string): Uint8Array {
+  const enc = new TextEncoder();
+  const keyBytes = enc.encode(key);
+  const valBytes = Uint8Array.from(deflateSync(enc.encode(value)));
+  const data = new Uint8Array(keyBytes.length + 1 + 2 + 1 + 1 + valBytes.length);
+  let offset = 0;
+  data.set(keyBytes, offset);
+  offset += keyBytes.length;
+  data[offset++] = 0;
+  data[offset++] = 1;
+  data[offset++] = 0;
+  data[offset++] = 0;
+  data[offset++] = 0;
+  data.set(valBytes, offset);
+  return buildPNGChunk("iTXt", data);
+}
+
 function buildMinimalIHDR(): Uint8Array {
   const data = new Uint8Array(13);
   const view = new DataView(data.buffer);
@@ -99,6 +117,23 @@ function assemblePNG(...chunks: Uint8Array[]): ArrayBuffer {
     offset += chunk.length;
   }
   return buf.buffer;
+}
+
+function buildTruncatedExifJPEG(): ArrayBuffer {
+  return Uint8Array.from([
+    0xff,
+    0xd8,
+    0xff,
+    0xe1,
+    0x00,
+    0x08,
+    0x45,
+    0x78,
+    0x69,
+    0x66,
+    0x00,
+    0x00,
+  ]).buffer;
 }
 
 describe("parseImageMeta", () => {
@@ -224,6 +259,25 @@ describe("parseImageMeta", () => {
     expect(result.source).toBe("Cake");
     const meta = result as CakeMeta;
     expect(meta.snapshot["generator"]).toBe("Cake");
+  });
+
+  it("parses compressed iTXt metadata", async () => {
+    const workflow = {
+      "1": { class_type: "KSampler", inputs: { steps: 24, cfg: 6.5, seed: 7 } },
+    };
+    const png = assemblePNG(
+      buildMinimalIHDR(),
+      buildCompressedITxtChunk("prompt", JSON.stringify(workflow)),
+      buildIENDChunk(),
+    );
+    const result = await parseImageMeta(png);
+    expect(result.source).toBe("ComfyUI");
+    expect((result as ComfyMeta).samplerInputs).toEqual({ steps: 24, cfg: 6.5, seed: 7 });
+  });
+
+  it("returns Unknown for truncated JPEG EXIF metadata", async () => {
+    const result = await parseImageMeta(buildTruncatedExifJPEG());
+    expect(result.source).toBe("Unknown");
   });
 
   it("accepts Uint8Array input as well as ArrayBuffer", async () => {

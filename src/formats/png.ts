@@ -2,6 +2,7 @@ import type { PNGChunks } from "../types.ts";
 
 const latin1 = new TextDecoder("iso-8859-1");
 const utf8 = new TextDecoder("utf-8");
+const COMPRESSED_PREFIX = "__compressed__";
 
 async function inflate(compressed: Uint8Array): Promise<string> {
   if (typeof DecompressionStream !== "undefined") {
@@ -70,24 +71,37 @@ function extractRaw(buffer: ArrayBuffer): Record<string, string | Uint8Array> {
       }
     } else if (type === "iTXt") {
       const separatorIndex = data.indexOf(0);
-      if (separatorIndex !== -1) {
+      if (separatorIndex !== -1 && separatorIndex + 2 < data.length) {
         const key = latin1.decode(data.slice(0, separatorIndex));
+        const compressionFlag = data[separatorIndex + 1];
+        const compressionMethod = data[separatorIndex + 2];
         let cursor = separatorIndex + 3;
         while (cursor < data.length && data[cursor] !== 0) {
           cursor += 1;
         }
+        if (cursor >= data.length) {
+          continue;
+        }
         cursor += 1;
         while (cursor < data.length && data[cursor] !== 0) {
           cursor += 1;
         }
+        if (cursor >= data.length) {
+          continue;
+        }
         cursor += 1;
-        chunks[key] = utf8.decode(data.slice(cursor));
+
+        if (compressionFlag === 1 && compressionMethod === 0) {
+          chunks[`${COMPRESSED_PREFIX}${key}`] = data.slice(cursor);
+        } else if (compressionFlag === 0) {
+          chunks[key] = utf8.decode(data.slice(cursor));
+        }
       }
     } else if (type === "zTXt") {
       const separatorIndex = data.indexOf(0);
       if (separatorIndex !== -1) {
         const key = latin1.decode(data.slice(0, separatorIndex));
-        chunks[`__z__${key}`] = data.slice(separatorIndex + 2);
+        chunks[`${COMPRESSED_PREFIX}${key}`] = data.slice(separatorIndex + 2);
       }
     } else if (type === "IEND") {
       break;
@@ -101,15 +115,15 @@ export async function extractPNGChunks(buffer: ArrayBuffer): Promise<PNGChunks> 
   const raw = extractRaw(buffer);
   const resolved: PNGChunks = {};
   for (const [key, value] of Object.entries(raw)) {
-    if (!key.startsWith("__z__")) {
+    if (!key.startsWith(COMPRESSED_PREFIX)) {
       resolved[key] = value as string;
       continue;
     }
-    const chunkKey = key.slice(5);
+    const chunkKey = key.slice(COMPRESSED_PREFIX.length);
     try {
       resolved[chunkKey] = await inflate(value as Uint8Array);
     } catch {
-      resolved[chunkKey] = "[zTXt decompression failed]";
+      resolved[chunkKey] = "[compressed text decompression failed]";
     }
   }
   return resolved;
