@@ -44,7 +44,8 @@
     "lint": "oxlint .",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
-    "prepare": "pnpm build",
+    "prepack": "pnpm build",
+    "prepublishOnly": "pnpm build",
     "typecheck": "tsc --noEmit",
     "test": "vitest --run",
     "smoke": "node ./scripts/smoke.mjs"
