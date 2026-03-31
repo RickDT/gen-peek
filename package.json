@@ -1,0 +1,53 @@
+{
+  "name": "gen-peek",
+  "version": "0.1.0",
+  "description": "Extract AI generator metadata from PNG, JPEG, and WebP images. Supports ComfyUI, A1111, Forge, Fooocus, InvokeAI, SwarmUI, NovelAI, and Cake metadata.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --run",
+    "smoke": "node ./scripts/smoke.mjs"
+  },
+  "keywords": [
+    "comfyui",
+    "stable-diffusion",
+    "automatic1111",
+    "image-metadata",
+    "ai-image",
+    "png-metadata",
+    "jpeg-metadata",
+    "webp-metadata",
+    "exif"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rickDT/gen-peek.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rickDT/gen-peek/issues"
+  },
+  "homepage": "https://github.com/rickDT/gen-peek#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.9",
+    "tsup": "^8.5.0",
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.2"
+  }
+}
