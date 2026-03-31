@@ -2,53 +2,56 @@
   "name": "gen-peek",
   "version": "0.1.0",
   "description": "Extract AI generator metadata from PNG, JPEG, and WebP images. Supports ComfyUI, A1111, Forge, Fooocus, InvokeAI, SwarmUI, NovelAI, and Cake metadata.",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "sideEffects": false,
-  "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
-    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
-    "prepare": "pnpm build",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest --run",
-    "smoke": "node ./scripts/smoke.mjs"
-  },
   "keywords": [
-    "comfyui",
-    "stable-diffusion",
-    "automatic1111",
-    "image-metadata",
     "ai-image",
-    "png-metadata",
+    "automatic1111",
+    "comfyui",
+    "exif",
+    "image-metadata",
     "jpeg-metadata",
-    "webp-metadata",
-    "exif"
+    "png-metadata",
+    "stable-diffusion",
+    "webp-metadata"
   ],
+  "homepage": "https://github.com/rickDT/gen-peek#readme",
+  "bugs": {
+    "url": "https://github.com/rickDT/gen-peek/issues"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rickDT/gen-peek.git"
   },
-  "bugs": {
-    "url": "https://github.com/rickDT/gen-peek/issues"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
   },
-  "homepage": "https://github.com/rickDT/gen-peek#readme",
-  "engines": {
-    "node": ">=18"
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "prepare": "pnpm build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --run",
+    "smoke": "node ./scripts/smoke.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.10.9",
-    "tsup": "^8.5.0",
+    "oxfmt": "^0.43.0",
+    "oxlint": "^1.58.0",
+    "release-please": "^17.3.0",
+    "tsdown": "^0.21.7",
     "typescript": "~5.9.3",
     "vitest": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

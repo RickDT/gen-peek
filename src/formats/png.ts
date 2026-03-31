@@ -30,9 +30,9 @@ async function inflate(compressed: Uint8Array): Promise<string> {
     return utf8.decode(output);
   }
 
-  const importNodeZlib = new Function(
-    "return import('node:zlib')",
-  ) as () => Promise<typeof import("node:zlib")>;
+  const importNodeZlib = new Function("return import('node:zlib')") as () => Promise<
+    typeof import("node:zlib")
+  >;
   const zlib = await importNodeZlib();
   return await new Promise<string>((resolve, reject) => {
     zlib.inflate(Buffer.from(compressed), (error, result) => {

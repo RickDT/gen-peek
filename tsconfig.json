@@ -8,6 +8,8 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "allowImportingTsExtensions": true,
+    "declaration": true,
+    "isolatedDeclarations": true,
     "noEmit": true
   },
   "include": ["src"]

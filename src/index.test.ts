@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 
 import { parseImageMeta } from "./index.ts";
-import type { A1111Meta, CakeMeta, ComfyMeta, InvokeAIMeta, NovelAIMeta, SwarmUIMeta } from "./index.ts";
+import type {
+  A1111Meta,
+  CakeMeta,
+  ComfyMeta,
+  InvokeAIMeta,
+  NovelAIMeta,
+  SwarmUIMeta,
+} from "./index.ts";
 
 const PNG_SIG = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
 
