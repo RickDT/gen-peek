@@ -1,0 +1,57 @@
+{
+  "name": "gen-peek",
+  "version": "0.1.0",
+  "description": "Extract AI generator metadata from PNG, JPEG, and WebP images. Supports ComfyUI, A1111, Forge, Fooocus, InvokeAI, SwarmUI, NovelAI, and Cake metadata.",
+  "keywords": [
+    "ai-image",
+    "automatic1111",
+    "comfyui",
+    "exif",
+    "image-metadata",
+    "jpeg-metadata",
+    "png-metadata",
+    "stable-diffusion",
+    "webp-metadata"
+  ],
+  "homepage": "https://github.com/rickDT/gen-peek#readme",
+  "bugs": {
+    "url": "https://github.com/rickDT/gen-peek/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rickDT/gen-peek.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "prepare": "pnpm build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --run",
+    "smoke": "node ./scripts/smoke.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.9",
+    "oxfmt": "^0.43.0",
+    "oxlint": "^1.58.0",
+    "release-please": "^17.3.0",
+    "tsdown": "^0.21.7",
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
